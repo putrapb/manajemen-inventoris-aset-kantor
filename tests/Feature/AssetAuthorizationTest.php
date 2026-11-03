@@ -88,4 +88,26 @@ class AssetAuthorizationTest extends TestCase
 
         $this->assertSoftDeleted('assets', ['id' => $asset->id]);
     }
+
+    public function test_soft_deleted_asset_is_hidden_from_list_detail_and_api(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $asset = Asset::factory()->create(['kode' => 'AST-SOFT-DELETE']);
+
+        $this->actingAs($admin)->delete(route('assets.destroy', $asset))->assertRedirect(route('assets.index'));
+
+        $this->assertSoftDeleted('assets', ['id' => $asset->id]);
+
+        $this->actingAs($admin)
+            ->get(route('assets.index'))
+            ->assertDontSee('AST-SOFT-DELETE');
+
+        $this->actingAs($admin)
+            ->get(route('assets.show', $asset->id))
+            ->assertNotFound();
+
+        $this->getJson('/api/assets')
+            ->assertOk()
+            ->assertJsonMissing(['kode' => 'AST-SOFT-DELETE']);
+    }
 }

@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0f2b46;">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center gap-2 fw-semibold" href="{{ url('/') }}">
+        <a class="navbar-brand d-flex align-items-center gap-2 fw-semibold" href="{{ auth()->check() ? route('assets.index') : route('login') }}">
             <i class="bi bi-box-seam"></i>
             <span>{{ config('app.name') }}</span>
         </a>
@@ -11,7 +11,15 @@
 
         <div class="collapse navbar-collapse" id="mainNavbar">
             @auth
-                <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2 ms-auto">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('assets.*') ? 'active' : '' }}" href="{{ route('assets.index') }}">
+                            <i class="bi bi-table me-1"></i> Daftar Aset
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
                     <span class="navbar-text text-white-50 small">
                         {{ auth()->user()->name }}
                     </span>

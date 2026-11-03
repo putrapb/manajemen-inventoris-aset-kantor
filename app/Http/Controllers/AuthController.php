@@ -29,7 +29,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended('/')
+        return redirect()->intended(route('assets.index'))
             ->with('success', 'Berhasil masuk. Selamat datang, '.Auth::user()->name.'.');
     }
 
@@ -50,7 +50,7 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect('/')
+        return redirect()->route('assets.index')
             ->with('success', 'Akun berhasil dibuat. Selamat datang, '.$user->name.'.');
     }
 

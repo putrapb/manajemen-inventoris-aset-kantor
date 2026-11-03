@@ -5,7 +5,9 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return auth()->check()
+        ? redirect()->route('assets.index')
+        : redirect()->route('login');
 });
 
 Route::middleware('guest')->group(function () {
@@ -20,6 +22,9 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/assets', [AssetController::class, 'index'])->name('assets.index');
+    Route::get('/assets/export', [AssetController::class, 'export'])->name('assets.export');
+
     Route::middleware('role:admin')->group(function () {
         Route::get('/assets/create', [AssetController::class, 'create'])->name('assets.create');
         Route::post('/assets', [AssetController::class, 'store'])->name('assets.store');
@@ -28,4 +33,6 @@ Route::middleware('auth')->group(function () {
         Route::patch('/assets/{asset}', [AssetController::class, 'update']);
         Route::delete('/assets/{asset}', [AssetController::class, 'destroy'])->name('assets.destroy');
     });
+
+    Route::get('/assets/{asset}', [AssetController::class, 'show'])->name('assets.show');
 });
